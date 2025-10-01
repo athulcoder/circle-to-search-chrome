@@ -1,7 +1,6 @@
 chrome.runtime.onMessage.addListener((msg, sender) => {
   if (msg.type === "capture") {
     chrome.tabs.captureVisibleTab(null, { format: "png" }, (dataUrl) => {
-      // Create a canvas to crop
       let img = new Image();
       img.src = dataUrl;
       img.onload = () => {
@@ -26,9 +25,14 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
 
         // Open cropped image in a new tab
         let newTab = window.open();
-        newTab.document.write(
-          `<img src="${cropped}" style="border-radius:50%;">`
-        );
+        newTab.document.write(`
+          <html>
+            <body style="margin:0;display:flex;justify-content:center;align-items:center;height:100vh;background:#000;">
+              <img src="${cropped}" style="border-radius:50%;max-width:90%;max-height:90%;">
+              <p style="color:#fff;text-align:center;">Right-click the image → Search Google for this image</p>
+            </body>
+          </html>
+        `);
       };
     });
   }
